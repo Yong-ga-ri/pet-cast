@@ -3,7 +3,6 @@ package com.varchar6.petcast.security;
 import com.varchar6.petcast.security.filter.DaoAuthenticationFilter;
 import com.varchar6.petcast.security.filter.JwtFilter;
 import com.varchar6.petcast.security.provider.ProviderManager;
-import com.varchar6.petcast.utility.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,17 +19,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class WebSecurity {
     private final Environment environment;
-    private final JwtUtil jwtUtil;
     private final ProviderManager providerManager;
 
     @Autowired
     public WebSecurity(
             Environment environment,
-            JwtUtil jwtUtil,
             ProviderManager providerManager
     ) {
         this.environment = environment;
-        this.jwtUtil = jwtUtil;
         this.providerManager = providerManager;
     }
 
@@ -51,7 +47,7 @@ public class WebSecurity {
 //                        .requestMatchers(new AntPathRequestMatcher("/api/v1/**")).hasRole(Role.CUSTOMER.getType())
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(providerManager), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(new DaoAuthenticationFilter(providerManager, environment));
 
         return http.build();

@@ -1,10 +1,8 @@
 package com.varchar6.petcast.security.provider;
 
 import com.varchar6.petcast.domain.member.query.service.MemberAuthenticationService;
-import com.varchar6.petcast.security.CustomUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,17 +17,14 @@ import org.springframework.stereotype.Component;
 public class DaoAuthenticationProvider implements AuthenticationProvider {
     private final MemberAuthenticationService memberAuthenticationService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final Environment environment;
 
     @Autowired
     public DaoAuthenticationProvider(
             MemberAuthenticationService memberAuthenticationService,
-            BCryptPasswordEncoder bCryptPasswordEncoder,
-            Environment environment
+            BCryptPasswordEncoder bCryptPasswordEncoder
     ) {
         this.memberAuthenticationService = memberAuthenticationService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.environment = environment;
     }
 
     @Override
@@ -47,6 +42,6 @@ public class DaoAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return true;
+        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

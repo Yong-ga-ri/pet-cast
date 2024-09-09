@@ -34,7 +34,6 @@ public class DaoAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        log.debug("attemptAuthentication in DaoAuthenticationFilter called");
         try {
             LoginRequestVO loginRequestVO = new ObjectMapper().readValue(request.getInputStream(), LoginRequestVO.class);
             return providerManager.authenticate(

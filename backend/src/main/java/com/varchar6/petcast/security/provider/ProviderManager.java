@@ -1,6 +1,7 @@
 package com.varchar6.petcast.security.provider;
 
 import com.varchar6.petcast.security.exception.AuthenticationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Component
 public class ProviderManager implements AuthenticationManager {
     private final List<AuthenticationProvider> providerList;

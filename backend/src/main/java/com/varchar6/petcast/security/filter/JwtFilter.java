@@ -1,11 +1,12 @@
 package com.varchar6.petcast.security.filter;
 
-import com.varchar6.petcast.utility.JwtUtil;
+import com.varchar6.petcast.security.JwtAuthenticationToken;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -13,10 +14,10 @@ import java.io.IOException;
 
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
-    private final JwtUtil jwtUtil;
+    private final AuthenticationManager providerManager;
 
-    public JwtFilter(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
+    public JwtFilter(AuthenticationManager providerManager) {
+        this.providerManager = providerManager;
     }
 
     @Override
@@ -25,22 +26,16 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        log.debug("jwt Filter called");
         String authorizationHeader = request.getHeader("Authorization");
 
         // 헤더가 있는지 확인
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.replace("Bearer ", "");
-
-            // 토큰이 유효한지 확인
-            if (jwtUtil.validateToken(token)) {
-                SecurityContextHolder.getContext()
-                        .setAuthentication(
-                        jwtUtil.getAuthentication(token)
-                );
-            }
+            SecurityContextHolder.getContext().setAuthentication(
+                    providerManager.authenticate(
+                            new JwtAuthenticationToken(authorizationHeader.replace("Bearer ", ""))
+                    )
+            ); // 인증 완료. 이후 필터 적용 X
         }
-        log.debug("no authentication with jwt Filter");
         filterChain.doFilter(request, response);
 
     }

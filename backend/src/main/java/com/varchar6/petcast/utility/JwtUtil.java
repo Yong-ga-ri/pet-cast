@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -29,25 +30,24 @@ public class JwtUtil {
         this.memberAuthenticationService = memberAuthenticationService;
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateAccessToken(String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key).build()
                     .parseClaimsJws(token);
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT token {}", e.getMessage());
+            log.info("Invalid access token {}", e.getMessage());
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token {}", e.getMessage());
+            log.info("Expired access token {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token {}", e.getMessage());
+            log.info("Unsupported access token {}", e.getMessage());
         } catch (IllegalArgumentException e) {
-            log.info("Empty JWT token {}", e.getMessage());
+            log.info("Empty access token {}", e.getMessage());
         }
         return true;
     }
 
     public Authentication getAuthentication(String token) {
-        log.debug("token: {}", token);
         Claims claims = parseClaims(token);
 
         Collection<? extends GrantedAuthority> authorities = null;
@@ -64,9 +64,10 @@ public class JwtUtil {
         } else {
             throw new IllegalArgumentException("No authorities found in token");
         }
+        UserDetails savedUser = memberAuthenticationService.loadUserByUsername(getUserId(token));
         return new UsernamePasswordAuthenticationToken(
-                memberAuthenticationService.loadUserByUsername(getUserId(token)),
-                "",
+                savedUser,
+                savedUser.getPassword(),
                 authorities
         );
     }
