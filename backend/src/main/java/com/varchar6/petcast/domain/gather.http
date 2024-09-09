@@ -1,2 +1,0 @@
-### 초대장 페이지 보여주기
-GET http://localhost:8080/api/v1/gather/invitation/1/2

@@ -1,4 +1,4 @@
-package com.varchar6.petcast.security;
+package com.varchar6.petcast.security.filter;
 
 import com.varchar6.petcast.utility.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,6 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        log.debug("jwt Filter called");
         String authorizationHeader = request.getHeader("Authorization");
 
         // 헤더가 있는지 확인
@@ -40,6 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 );
             }
         }
+        log.debug("no authentication with jwt Filter");
         filterChain.doFilter(request, response);
 
     }

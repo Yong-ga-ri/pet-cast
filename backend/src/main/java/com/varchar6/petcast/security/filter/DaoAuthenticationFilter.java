@@ -1,7 +1,8 @@
-package com.varchar6.petcast.security;
+package com.varchar6.petcast.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.varchar6.petcast.domain.member.query.vo.LoginRequestVO;
+import com.varchar6.petcast.security.provider.ProviderManager;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -10,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -23,21 +23,23 @@ import java.util.Date;
 import java.util.Objects;
 
 @Slf4j
-public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class DaoAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final Environment environment;
+    private final ProviderManager providerManager;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager, Environment environment) {
-        super(authenticationManager);
+    public DaoAuthenticationFilter(ProviderManager providerManager, Environment environment) {
+        this.providerManager = providerManager;
         this.environment = environment;
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        log.debug("attemptAuthentication in DaoAuthenticationFilter called");
         try {
-            LoginRequestVO credentials = new ObjectMapper().readValue(request.getInputStream(), LoginRequestVO.class);
-            return getAuthenticationManager().authenticate(
+            LoginRequestVO loginRequestVO = new ObjectMapper().readValue(request.getInputStream(), LoginRequestVO.class);
+            return providerManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            credentials.getLoginId(), credentials.getPassword(), new ArrayList<>()
+                            loginRequestVO.getLoginId(), loginRequestVO.getPassword(), new ArrayList<>()
                     )
             );
         } catch (IOException e) {
@@ -52,7 +54,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             FilterChain chain,
             Authentication authResult
     ) {
-        Claims claims = Jwts.claims().setSubject(((CustomUser) authResult.getPrincipal()).getUsername());
+        Claims claims = Jwts.claims().setSubject(authResult.getName());
         claims.put("authorities", authResult.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList());

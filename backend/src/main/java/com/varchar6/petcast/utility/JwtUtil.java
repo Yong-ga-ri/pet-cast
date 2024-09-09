@@ -47,6 +47,7 @@ public class JwtUtil {
     }
 
     public Authentication getAuthentication(String token) {
+        log.debug("token: {}", token);
         Claims claims = parseClaims(token);
 
         Collection<? extends GrantedAuthority> authorities = null;

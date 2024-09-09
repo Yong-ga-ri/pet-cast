@@ -27,6 +27,7 @@ public class MemberAuthenticationServiceImpl implements MemberAuthenticationServ
 
     @Override
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
+        log.debug("loadUserByUsername called");
 
         MemberVO loginMember = memberMapper.selectMemberByMemberIdWithAuthority(loginId);
 

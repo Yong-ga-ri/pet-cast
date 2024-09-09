@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 
 @Getter
 @Setter
-@Entity
+@Entity(name="eventEntity")
 @Table(name = "tbl_event")
 @Builder
 @NoArgsConstructor
