@@ -1,6 +1,7 @@
-package com.varchar6.petcast.utility;
+package com.varchar6.petcast.security.filter;
 
 import com.varchar6.petcast.security.CustomUser;
+import com.varchar6.petcast.utility.JwtUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

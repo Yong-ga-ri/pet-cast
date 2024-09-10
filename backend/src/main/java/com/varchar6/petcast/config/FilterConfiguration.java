@@ -1,7 +1,7 @@
 package com.varchar6.petcast.config;
 
 import com.varchar6.petcast.utility.JwtUtil;
-import com.varchar6.petcast.utility.TokenFilter;
+import com.varchar6.petcast.security.filter.TokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
