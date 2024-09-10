@@ -1,6 +1,6 @@
 package com.varchar6.petcast.security.filter;
 
-import com.varchar6.petcast.security.JwtAuthenticationToken;
+import com.varchar6.petcast.security.JwtAuthenticationAccessToken;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,12 +27,12 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
-
+        log.debug("JwtAccessTokenFilter called");
         // 헤더가 있는지 확인
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             SecurityContextHolder.getContext().setAuthentication(
                     providerManager.authenticate(
-                            new JwtAuthenticationToken(authorizationHeader.replace("Bearer ", ""))
+                            new JwtAuthenticationAccessToken(authorizationHeader.replace("Bearer ", ""))
                     )
             ); // 인증 완료. 이후 필터 적용 X
         }

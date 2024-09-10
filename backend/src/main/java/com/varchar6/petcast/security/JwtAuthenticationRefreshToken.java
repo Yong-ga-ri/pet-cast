@@ -6,10 +6,10 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 import java.util.List;
 
-public class JwtAuthenticationToken implements Authentication {
+public class JwtAuthenticationRefreshToken implements Authentication {
     private final String token;
 
-    public JwtAuthenticationToken(String token) {
+    public JwtAuthenticationRefreshToken(String token) {
         this.token = token;
     }
 

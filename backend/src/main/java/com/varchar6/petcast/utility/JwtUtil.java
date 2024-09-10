@@ -35,8 +35,8 @@ public class JwtUtil {
     ) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
-        this.environment = environment;
         this.memberAuthenticationService = memberAuthenticationService;
+        this.environment = environment;
     }
 
     public boolean validateAccessToken(String token) {
@@ -46,7 +46,6 @@ public class JwtUtil {
                     .parseClaimsJws(token);
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid access token {}", e.getMessage());
-
         } catch (ExpiredJwtException e) {
             log.info("Expired access token {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
@@ -93,11 +92,23 @@ public class JwtUtil {
         return parseClaims(token).getSubject();
     }
 
-    public String generateToken(Authentication authentication, boolean isAccessToken) {
-        String tokenExpiredAt = null;
-        if (isAccessToken) tokenExpiredAt = "token.access.expiration_time";
-        else tokenExpiredAt = "token.refresh.expiration_time";
+    public String generateAccessToken(Authentication authentication) {
+        return createToken(
+                setClaims(authentication),
+                environment.getProperty("token.access.expiration_time")
+        );
+    }
 
+    public String generateRefreshToken(Authentication authentication) {
+        String refreshToken = createToken(
+                setClaims(authentication),
+                environment.getProperty("token.refresh.expiration_time")
+        );
+
+        return refreshToken;
+    }
+
+    private Claims setClaims(Authentication authentication) {
         Claims claims = Jwts.claims().setSubject(authentication.getName());
         claims.put(
                 "authorities",
@@ -105,8 +116,7 @@ public class JwtUtil {
                         .map(GrantedAuthority::getAuthority)
                         .toList()
         );
-
-        return createToken(claims, tokenExpiredAt);
+        return claims;
     }
 
     private String createToken(Claims claims, String tokenExpiredAt) {
@@ -116,9 +126,7 @@ public class JwtUtil {
                         new Date(
                                 System.currentTimeMillis()
                                         + Long.parseLong(
-                                        Objects.requireNonNull(
-                                                environment.getProperty(tokenExpiredAt)
-                                        )
+                                                Objects.requireNonNull(tokenExpiredAt)
                                 )
                         )
                 )

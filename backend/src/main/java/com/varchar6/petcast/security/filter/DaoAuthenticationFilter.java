@@ -32,6 +32,8 @@ public class DaoAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
+            log.debug("DaoAuthenticationFilter called and trying attemptAuthentication");
+
             LoginRequestVO loginRequestVO = new ObjectMapper().readValue(request.getInputStream(), LoginRequestVO.class);
             return providerManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -50,8 +52,8 @@ public class DaoAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             FilterChain chain,
             Authentication authResult
     ) {
-        String accessToken = jwtUtil.generateToken(authResult, true);
-        String refreshToken = jwtUtil.generateToken(authResult, false);
+        String accessToken = jwtUtil.generateAccessToken(authResult);
+        String refreshToken = jwtUtil.generateRefreshToken(authResult);
 
         response.addHeader("Access-Token", accessToken);
         response.addHeader("Refresh-Token", refreshToken);

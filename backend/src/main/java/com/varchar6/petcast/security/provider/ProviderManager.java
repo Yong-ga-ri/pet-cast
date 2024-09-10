@@ -23,9 +23,12 @@ public class ProviderManager implements AuthenticationManager {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         for (AuthenticationProvider provider : providerList) {
+            log.debug("searching for adequate provider.. // authentication.getClass(): {}", authentication.getClass());
             if (provider.supports(authentication.getClass())) {
+                log.debug("provider selected: {}", provider.getClass().getName());
                 return provider.authenticate(authentication);
             }
+            log.debug("not provider selected: {}", provider.getClass().getName());
         }
 
         // 인증 실패 시 예외 처리
