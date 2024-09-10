@@ -40,22 +40,23 @@ public class MemberController {
 
     @GetMapping("/test")
     public String getTest(
-            @RequestAttribute("memberId") int memberId,
-            @RequestAttribute("memberLoginId") String memberLoginId,
-            @RequestAttribute("memberName") String name,
-            @RequestAttribute("memberPhone") String memberPhone,
-            @RequestAttribute("memberNickname") String memberNickname,
-            @RequestAttribute("image") String image,
-            @RequestAttribute("created") String created,
-            @RequestAttribute("updated") String updated,
-            @RequestAttribute("active") boolean active,
-            @RequestAttribute("introduction") String introduction,
-            @RequestAttribute("authorities") List<String> authorities) {
-        log.debug("memberId: {}", memberId);
-        log.debug("memberLoginId: {}", memberLoginId);
-        log.debug("created: {}", created);
-        log.debug("active: {}", active);
-        log.debug("authorities: {}", authorities);
+//            @RequestAttribute("memberId") int memberId,
+//            @RequestAttribute("memberLoginId") String memberLoginId,
+//            @RequestAttribute("memberName") String name,
+//            @RequestAttribute("memberPhone") String memberPhone,
+//            @RequestAttribute("memberNickname") String memberNickname,
+//            @RequestAttribute("image") String image,
+//            @RequestAttribute("created") String created,
+//            @RequestAttribute("updated") String updated,
+//            @RequestAttribute("active") boolean active,
+//            @RequestAttribute("introduction") String introduction,
+//            @RequestAttribute("authorities") List<String> authorities
+    ) {
+//        log.debug("memberId: {}", memberId);
+//        log.debug("memberLoginId: {}", memberLoginId);
+//        log.debug("created: {}", created);
+//        log.debug("active: {}", active);
+//        log.debug("authorities: {}", authorities);
 
         return "GET working";
     }
