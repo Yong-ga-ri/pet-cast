@@ -3,33 +3,30 @@ package com.varchar6.petcast.security.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.varchar6.petcast.domain.member.query.vo.LoginRequestVO;
 import com.varchar6.petcast.security.provider.ProviderManager;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.varchar6.petcast.utility.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
 
 @Slf4j
 public class DaoAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    private final Environment environment;
     private final ProviderManager providerManager;
+    private final JwtUtil jwtUtil;
 
-    public DaoAuthenticationFilter(ProviderManager providerManager, Environment environment) {
+    public DaoAuthenticationFilter(
+            ProviderManager providerManager,
+            JwtUtil jwtUtil
+    ) {
         this.providerManager = providerManager;
-        this.environment = environment;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -53,25 +50,12 @@ public class DaoAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             FilterChain chain,
             Authentication authResult
     ) {
-        Claims claims = Jwts.claims().setSubject(authResult.getName());
-        claims.put("authorities", authResult.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList());
+        String accessToken = jwtUtil.generateToken(authResult, true);
+        String refreshToken = jwtUtil.generateToken(authResult, false);
 
-        String token = Jwts.builder()
-                .setClaims(claims)
-                .setExpiration(
-                        new Date(
-                                System.currentTimeMillis()
-                                        + Long.parseLong(
-                                        Objects.requireNonNull(
-                                                environment.getProperty("token.expiration_time")
-                                        )
-                                )
-                        )
-                )
-                .signWith(SignatureAlgorithm.HS512, environment.getProperty("token.secret"))
-                .compact();
-        response.addHeader("token", token);
+        response.addHeader("Access-Token", accessToken);
+        response.addHeader("Refresh-Token", refreshToken);
     }
+
+
 }

@@ -1,8 +1,10 @@
 package com.varchar6.petcast.security;
 
 import com.varchar6.petcast.security.filter.DaoAuthenticationFilter;
-import com.varchar6.petcast.security.filter.JwtFilter;
+import com.varchar6.petcast.security.filter.JwtAccessTokenFilter;
+import com.varchar6.petcast.security.filter.JwtRefreshTokenFilter;
 import com.varchar6.petcast.security.provider.ProviderManager;
+import com.varchar6.petcast.utility.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,16 +20,16 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class WebSecurity {
-    private final Environment environment;
     private final ProviderManager providerManager;
+    private final JwtUtil jwtUtil;
 
     @Autowired
     public WebSecurity(
-            Environment environment,
-            ProviderManager providerManager
+            ProviderManager providerManager,
+            JwtUtil jwtUtil
     ) {
-        this.environment = environment;
         this.providerManager = providerManager;
+        this.jwtUtil = jwtUtil;
     }
 
     @Bean
@@ -47,8 +49,9 @@ public class WebSecurity {
 //                        .requestMatchers(new AntPathRequestMatcher("/api/v1/**")).hasRole(Role.CUSTOMER.getType())
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtFilter(providerManager), UsernamePasswordAuthenticationFilter.class)
-                .addFilter(new DaoAuthenticationFilter(providerManager, environment));
+                .addFilterBefore(new JwtAccessTokenFilter(providerManager), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtRefreshTokenFilter(providerManager), UsernamePasswordAuthenticationFilter.class)
+                .addFilter(new DaoAuthenticationFilter(providerManager, jwtUtil));
 
         return http.build();
     }

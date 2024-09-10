@@ -6,6 +6,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,17 +17,25 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class JwtUtil {
     private final Key key;
+    private final Environment environment;
     private final MemberAuthenticationService memberAuthenticationService;
 
-    public JwtUtil(@Value("${token.secret}") String secretKey, MemberAuthenticationService memberAuthenticationService) {
+    public JwtUtil(
+            @Value("${token.secret}") String secretKey,
+            MemberAuthenticationService memberAuthenticationService,
+            Environment environment
+    ) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.environment = environment;
         this.memberAuthenticationService = memberAuthenticationService;
     }
 
@@ -37,6 +46,7 @@ public class JwtUtil {
                     .parseClaimsJws(token);
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid access token {}", e.getMessage());
+
         } catch (ExpiredJwtException e) {
             log.info("Expired access token {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
@@ -82,4 +92,38 @@ public class JwtUtil {
     public String getUserId(String token)  {
         return parseClaims(token).getSubject();
     }
+
+    public String generateToken(Authentication authentication, boolean isAccessToken) {
+        String tokenExpiredAt = null;
+        if (isAccessToken) tokenExpiredAt = "token.access.expiration_time";
+        else tokenExpiredAt = "token.refresh.expiration_time";
+
+        Claims claims = Jwts.claims().setSubject(authentication.getName());
+        claims.put(
+                "authorities",
+                authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .toList()
+        );
+
+        return createToken(claims, tokenExpiredAt);
+    }
+
+    private String createToken(Claims claims, String tokenExpiredAt) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(
+                        new Date(
+                                System.currentTimeMillis()
+                                        + Long.parseLong(
+                                        Objects.requireNonNull(
+                                                environment.getProperty(tokenExpiredAt)
+                                        )
+                                )
+                        )
+                )
+                .signWith(SignatureAlgorithm.HS512, environment.getProperty("token.secret"))
+                .compact();
+    }
+
 }
