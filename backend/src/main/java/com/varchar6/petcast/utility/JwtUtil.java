@@ -15,10 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -73,7 +70,7 @@ public class JwtUtil {
         } else {
             throw new IllegalArgumentException("No authorities found in token");
         }
-        UserDetails savedUser = memberAuthenticationService.loadUserByUsername(getUserId(token));
+        UserDetails savedUser = memberAuthenticationService.loadUserByUsername(getLoginId(token));
         return new UsernamePasswordAuthenticationToken(
                 savedUser,
                 savedUser.getPassword(),
@@ -82,13 +79,15 @@ public class JwtUtil {
     }
 
     public Claims parseClaims(String token) {
+        log.debug("parseClaims called");
         return Jwts.parserBuilder()
                 .setSigningKey(key).build()
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    public String getUserId(String token)  {
+    public String getLoginId(String token)  {
+        log.debug("getLoginId called");
         return parseClaims(token).getSubject();
     }
 
@@ -100,12 +99,9 @@ public class JwtUtil {
     }
 
     public String generateRefreshToken(Authentication authentication) {
-        String refreshToken = createToken(
-                setClaims(authentication),
-                environment.getProperty("token.refresh.expiration_time")
+        return createToken(
+                setClaims(authentication), environment.getProperty("token.refresh.expiration_time")
         );
-
-        return refreshToken;
     }
 
     private Claims setClaims(Authentication authentication) {

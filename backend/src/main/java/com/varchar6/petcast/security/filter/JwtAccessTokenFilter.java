@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -15,9 +16,11 @@ import java.io.IOException;
 @Slf4j
 public class JwtAccessTokenFilter extends OncePerRequestFilter {
     private final AuthenticationManager providerManager;
+    private final AntPathRequestMatcher excludePathMatcher;
 
     public JwtAccessTokenFilter(AuthenticationManager providerManager) {
         this.providerManager = providerManager;
+        this.excludePathMatcher = new AntPathRequestMatcher("/api/v1/auth/refresh", "POST");
     }
 
     @Override
@@ -26,17 +29,21 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader("Authorization");
-        log.debug("JwtAccessTokenFilter called");
-        // 헤더가 있는지 확인
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            SecurityContextHolder.getContext().setAuthentication(
-                    providerManager.authenticate(
-                            new JwtAuthenticationAccessToken(authorizationHeader.replace("Bearer ", ""))
-                    )
-            ); // 인증 완료. 이후 필터 적용 X
+        if (excludePathMatcher.matches(request)) {
+            log.debug("JwtAccessTokenFilter skipped");
+            filterChain.doFilter(request, response);
+        } else {
+            String authorizationHeader = request.getHeader("Authorization");
+            log.debug("JwtAccessTokenFilter called");
+            // 헤더가 있는지 확인
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                SecurityContextHolder.getContext().setAuthentication(
+                        providerManager.authenticate(
+                                new JwtAuthenticationAccessToken(authorizationHeader.replace("Bearer ", ""))
+                        )
+                ); // 인증 완료. 이후 필터 적용 X
+            }
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
-
     }
 }

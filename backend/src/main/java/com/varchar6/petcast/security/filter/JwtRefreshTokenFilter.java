@@ -1,12 +1,15 @@
 package com.varchar6.petcast.security.filter;
 
 import com.varchar6.petcast.security.JwtAuthenticationRefreshToken;
+import com.varchar6.petcast.security.service.RefreshTokenService;
+import com.varchar6.petcast.utility.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,10 +20,12 @@ import java.io.IOException;
 public class JwtRefreshTokenFilter extends OncePerRequestFilter {
     private final AuthenticationManager providerManager;
     private final AntPathRequestMatcher refreshTokenRequestMatcher;
+    private final JwtUtil jwtUtil;
 
-    public JwtRefreshTokenFilter(AuthenticationManager providerManager) {
+    public JwtRefreshTokenFilter(AuthenticationManager providerManager, JwtUtil jwtUtil) {
         this.providerManager = providerManager;
         this.refreshTokenRequestMatcher = new AntPathRequestMatcher("/api/v1/auth/refresh", "POST");
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -32,13 +37,18 @@ public class JwtRefreshTokenFilter extends OncePerRequestFilter {
         if (refreshTokenRequestMatcher.matches(request)) {
             String authorizationHeader = request.getHeader("Authorization");
             log.debug("JwtRefreshTokenFilter called");
+
             // 헤더가 있는지 확인
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                SecurityContextHolder.getContext().setAuthentication(
-                        providerManager.authenticate(
-                                new JwtAuthenticationRefreshToken(authorizationHeader.replace("Bearer ", ""))
-                        )
-                ); // 인증 완료. 이후 필터 적용 X
+                Authentication authenticatedResult = providerManager.authenticate(
+                        new JwtAuthenticationRefreshToken(authorizationHeader.replace("Bearer ", ""))
+                );
+                String accessToken = jwtUtil.generateAccessToken(authenticatedResult);
+
+                response.addHeader("Access-Token", accessToken);
+
+                SecurityContextHolder.getContext().setAuthentication(authenticatedResult);
+                return;
             }
         }
         filterChain.doFilter(request, response);

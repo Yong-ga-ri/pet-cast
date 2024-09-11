@@ -49,7 +49,7 @@ public class WebSecurity {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAccessTokenFilter(providerManager), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtRefreshTokenFilter(providerManager), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtRefreshTokenFilter(providerManager, jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(new DaoAuthenticationFilter(providerManager, jwtUtil));
 
         return http.build();
