@@ -57,7 +57,6 @@ public class WebSecurity {
                         .anyRequest().authenticated()
                 )
                 .logout(
-
                         logout -> logout
                                 .logoutUrl("/api/v1/auth/logout")
                                 .addLogoutHandler(logoutHandler)

@@ -1,7 +1,6 @@
 package com.varchar6.petcast.security.filter;
 
 import com.varchar6.petcast.security.JwtAuthenticationRefreshToken;
-import com.varchar6.petcast.security.service.RefreshTokenService;
 import com.varchar6.petcast.utility.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,8 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -40,14 +37,13 @@ public class JwtRefreshTokenFilter extends OncePerRequestFilter {
 
             // 헤더가 있는지 확인
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                Authentication authenticatedResult = providerManager.authenticate(
-                        new JwtAuthenticationRefreshToken(authorizationHeader.replace("Bearer ", ""))
+                String accessToken = jwtUtil.generateAccessToken(
+                        providerManager.authenticate(
+                                new JwtAuthenticationRefreshToken(authorizationHeader.replace("Bearer ", ""))
+                        )
                 );
-                String accessToken = jwtUtil.generateAccessToken(authenticatedResult);
 
                 response.addHeader("Access-Token", accessToken);
-
-                SecurityContextHolder.getContext().setAuthentication(authenticatedResult);
                 return;
             }
         }

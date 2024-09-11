@@ -36,7 +36,7 @@ public class JwtUtil {
         this.environment = environment;
     }
 
-    public boolean validateAccessToken(String token) {
+    public boolean isTokenValidate(String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key).build()

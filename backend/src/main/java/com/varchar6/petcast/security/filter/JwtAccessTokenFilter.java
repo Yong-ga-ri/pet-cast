@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -37,11 +36,9 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
             log.debug("JwtAccessTokenFilter called");
             // 헤더가 있는지 확인
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                SecurityContextHolder.getContext().setAuthentication(
-                        providerManager.authenticate(
-                                new JwtAuthenticationAccessToken(authorizationHeader.replace("Bearer ", ""))
-                        )
-                ); // 인증 완료. 이후 필터 적용 X
+                providerManager.authenticate(
+                        new JwtAuthenticationAccessToken(authorizationHeader.replace("Bearer ", ""))
+                );
             }
             filterChain.doFilter(request, response);
         }
