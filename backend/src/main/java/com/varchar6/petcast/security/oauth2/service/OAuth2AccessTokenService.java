@@ -53,7 +53,7 @@ public class OAuth2AccessTokenService {
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
 
         // POST 요청으로 토큰 받기
-        ResponseEntity<OAuth2TokenResponseVO> tokenResponse = restTemplate.exchange(tokenUri, HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> tokenResponse = restTemplate.exchange(tokenUri, HttpMethod.POST, entity, String.class);
         log.debug("tokenResponse: {}", tokenResponse);
 
         return tokenResponse.getBody();  // JSON 형태로 토큰 정보 반환
