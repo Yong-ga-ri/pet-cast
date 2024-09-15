@@ -15,11 +15,13 @@ import java.io.IOException;
 @Slf4j
 public class JwtAccessTokenFilter extends OncePerRequestFilter {
     private final AuthenticationManager providerManager;
-    private final AntPathRequestMatcher excludePathMatcher;
+    private final AntPathRequestMatcher refreshExcludePathMatcher;
+    private final AntPathRequestMatcher oAuthExcludePathMatcher;
 
     public JwtAccessTokenFilter(AuthenticationManager providerManager) {
         this.providerManager = providerManager;
-        this.excludePathMatcher = new AntPathRequestMatcher("/api/v1/auth/refresh", "POST");
+        this.refreshExcludePathMatcher = new AntPathRequestMatcher("/api/v1/auth/refresh", "POST");
+        this.oAuthExcludePathMatcher = new AntPathRequestMatcher("/api/v1/login/oauth2/code/kakao", "GET");
     }
 
     @Override
@@ -28,7 +30,7 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        if (excludePathMatcher.matches(request)) {
+        if (refreshExcludePathMatcher.matches(request) || oAuthExcludePathMatcher.matches(request)) {
             log.debug("JwtAccessTokenFilter skipped");
             filterChain.doFilter(request, response);
         } else {
