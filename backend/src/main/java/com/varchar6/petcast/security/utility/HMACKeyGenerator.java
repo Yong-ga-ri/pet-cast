@@ -1,4 +1,4 @@
-package com.varchar6.petcast.utility;
+package com.varchar6.petcast.security.utility;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;

@@ -1,4 +1,4 @@
-package com.varchar6.petcast.utility;
+package com.varchar6.petcast.security.utility;
 
 import com.varchar6.petcast.domain.member.query.service.MemberAuthenticationService;
 import io.jsonwebtoken.*;

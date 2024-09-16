@@ -1,7 +1,7 @@
-package com.varchar6.petcast.security.handler.logout;
+package com.varchar6.petcast.security.logout.handler;
 
-import com.varchar6.petcast.security.service.RefreshTokenService;
-import com.varchar6.petcast.utility.JwtUtil;
+import com.varchar6.petcast.security.jwt.service.RefreshTokenService;
+import com.varchar6.petcast.security.utility.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

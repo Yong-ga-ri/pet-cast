@@ -1,4 +1,4 @@
-package com.varchar6.petcast.security;
+package com.varchar6.petcast.security.client;
 
 
 import lombok.extern.slf4j.Slf4j;

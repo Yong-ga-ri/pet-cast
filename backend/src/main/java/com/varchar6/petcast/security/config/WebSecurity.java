@@ -1,14 +1,13 @@
-package com.varchar6.petcast.security;
+package com.varchar6.petcast.security.config;
 
-import com.varchar6.petcast.security.filter.DaoAuthenticationFilter;
-import com.varchar6.petcast.security.filter.JwtAccessTokenFilter;
-import com.varchar6.petcast.security.filter.JwtRefreshTokenFilter;
+import com.varchar6.petcast.security.dao.DaoAuthenticationFilter;
+import com.varchar6.petcast.security.jwt.filter.JwtAccessTokenFilter;
+import com.varchar6.petcast.security.jwt.filter.JwtRefreshTokenFilter;
 import com.varchar6.petcast.security.oauth2.CustomAuthorizationCodeTokenResponseClient;
 import com.varchar6.petcast.security.oauth2.CustomHttpSessionOAuth2AuthorizationRequestRepository;
-import com.varchar6.petcast.security.oauth2.CustomOAuth2UserService;
-import com.varchar6.petcast.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import com.varchar6.petcast.security.oauth2.service.CustomOAuth2UserService;
 import com.varchar6.petcast.security.provider.ProviderManager;
-import com.varchar6.petcast.utility.JwtUtil;
+import com.varchar6.petcast.security.utility.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +15,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.OAuth2AuthorizationSuccessHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;

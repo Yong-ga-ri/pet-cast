@@ -1,4 +1,4 @@
-package com.varchar6.petcast.security.oauth2;
+package com.varchar6.petcast.security.oauth2.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;

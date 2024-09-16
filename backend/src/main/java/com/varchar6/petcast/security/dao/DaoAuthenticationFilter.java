@@ -1,9 +1,9 @@
-package com.varchar6.petcast.security.filter;
+package com.varchar6.petcast.security.dao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.varchar6.petcast.domain.member.query.vo.LoginRequestVO;
 import com.varchar6.petcast.security.provider.ProviderManager;
-import com.varchar6.petcast.utility.JwtUtil;
+import com.varchar6.petcast.security.utility.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

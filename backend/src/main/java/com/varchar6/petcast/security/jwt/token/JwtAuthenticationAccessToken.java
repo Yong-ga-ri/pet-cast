@@ -1,4 +1,4 @@
-package com.varchar6.petcast.security;
+package com.varchar6.petcast.security.jwt.token;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -6,10 +6,10 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 import java.util.List;
 
-public class JwtAuthenticationRefreshToken implements Authentication {
+public class JwtAuthenticationAccessToken implements Authentication {
     private final String token;
 
-    public JwtAuthenticationRefreshToken(String token) {
+    public JwtAuthenticationAccessToken(String token) {
         this.token = token;
     }
 

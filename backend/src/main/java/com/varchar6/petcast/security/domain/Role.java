@@ -1,4 +1,4 @@
-package com.varchar6.petcast.security;
+package com.varchar6.petcast.security.domain;
 
 public enum Role {
       ADMIN("ADMIN", 1)

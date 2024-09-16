@@ -1,7 +1,7 @@
-package com.varchar6.petcast.security.filter;
+package com.varchar6.petcast.security.jwt.filter;
 
-import com.varchar6.petcast.security.JwtAuthenticationRefreshToken;
-import com.varchar6.petcast.utility.JwtUtil;
+import com.varchar6.petcast.security.jwt.token.JwtAuthenticationRefreshToken;
+import com.varchar6.petcast.security.utility.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

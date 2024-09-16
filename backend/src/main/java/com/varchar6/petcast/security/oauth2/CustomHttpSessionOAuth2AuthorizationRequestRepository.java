@@ -55,7 +55,6 @@ public class CustomHttpSessionOAuth2AuthorizationRequestRepository implements Au
             this.removeAuthorizationRequest(request, response);
         } else {
             String state = authorizationRequest.getState();
-            log.debug("state1: {}", state);
             Assert.hasText(state, "authorizationRequest.state cannot be empty");
             request.getSession().setAttribute(this.sessionAttributeName, authorizationRequest);
         }

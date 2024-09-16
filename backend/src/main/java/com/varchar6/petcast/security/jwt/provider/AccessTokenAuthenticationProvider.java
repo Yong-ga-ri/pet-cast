@@ -1,7 +1,7 @@
-package com.varchar6.petcast.security.provider;
+package com.varchar6.petcast.security.jwt.provider;
 
-import com.varchar6.petcast.security.JwtAuthenticationAccessToken;
-import com.varchar6.petcast.utility.JwtUtil;
+import com.varchar6.petcast.security.jwt.token.JwtAuthenticationAccessToken;
+import com.varchar6.petcast.security.utility.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;

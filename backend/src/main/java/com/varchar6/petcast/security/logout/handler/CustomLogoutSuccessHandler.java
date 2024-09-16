@@ -1,4 +1,4 @@
-package com.varchar6.petcast.security.handler.logout;
+package com.varchar6.petcast.security.logout.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

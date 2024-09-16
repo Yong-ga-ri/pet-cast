@@ -1,4 +1,4 @@
-package com.varchar6.petcast.security.service;
+package com.varchar6.petcast.security.jwt.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

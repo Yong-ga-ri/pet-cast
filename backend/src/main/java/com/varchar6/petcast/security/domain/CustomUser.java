@@ -1,4 +1,4 @@
-package com.varchar6.petcast.security;
+package com.varchar6.petcast.security.domain;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

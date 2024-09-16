@@ -1,4 +1,4 @@
-package com.varchar6.petcast.security.oauth2;
+package com.varchar6.petcast.security.oauth2.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.varchar6.petcast.security.oauth2.service.OAuth2AccessTokenService;
