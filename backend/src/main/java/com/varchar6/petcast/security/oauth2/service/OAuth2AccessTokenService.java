@@ -61,4 +61,19 @@ public class OAuth2AccessTokenService {
         return objectMapper.readValue(tokenBody, OAuth2TokenResponseVO.class);
 
     }
+
+    public String requestUserInfo(String accessToken) {
+        // 헤더에 Access Token 추가
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        // GET 요청으로 사용자 정보 가져오기
+        ResponseEntity<String> response = restTemplate.exchange(userInfoUri, HttpMethod.GET, entity, String.class);
+        log.debug("response: {}", response);
+        log.debug("response.getBody(): {}", response.getBody());
+        return response.getBody();  // 사용자 정보 반환
+
+    }
 }

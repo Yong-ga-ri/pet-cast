@@ -31,5 +31,8 @@ public class OAuth2Controller {
         log.debug("scope: {}", tokenVO.getScope());
 //        tokenVO.get
         log.debug("tokenVO: {}", tokenVO);
+
+        String userInfo = oAuth2AccessTokenService.requestUserInfo(tokenVO.getAccess_token());
+        log.debug("userInfo: {}", userInfo);
     }
 }
