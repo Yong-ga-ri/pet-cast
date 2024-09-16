@@ -1,10 +1,12 @@
 package com.varchar6.petcast.security.oauth2.vo;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString
 @Getter
+@NoArgsConstructor
 public class OAuth2TokenResponseVO {
     private String access_token;
     private String token_type;
