@@ -1,5 +1,6 @@
 package com.varchar6.petcast.security.oauth2;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 
+@Slf4j
 public class CustomAuthorizationCodeTokenResponseClient implements OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> {
     private static final String INVALID_TOKEN_RESPONSE_ERROR_CODE = "invalid_token_response";
     private Converter<OAuth2AuthorizationCodeGrantRequest, RequestEntity<?>> requestEntityConverter = new CustomClientAuthenticationMethodValidatingRequestEntityConverter(new OAuth2AuthorizationCodeGrantRequestEntityConverter());
@@ -34,6 +36,7 @@ public class CustomAuthorizationCodeTokenResponseClient implements OAuth2AccessT
     }
 
     public OAuth2AccessTokenResponse getTokenResponse(OAuth2AuthorizationCodeGrantRequest authorizationCodeGrantRequest) {
+        log.debug("getTokenResponse called in CustomAuthorizationCodeTokenResponseClient");
         OAuth2AuthorizationExchange oAuth2AuthorizationExchange = authorizationCodeGrantRequest.getAuthorizationExchange();
         OAuth2AuthorizationRequest oAuth2AuthorizationRequest = oAuth2AuthorizationExchange.getAuthorizationRequest();
 
