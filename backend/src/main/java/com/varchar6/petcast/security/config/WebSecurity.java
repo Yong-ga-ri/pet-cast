@@ -5,6 +5,7 @@ import com.varchar6.petcast.security.jwt.filter.JwtAccessTokenFilter;
 import com.varchar6.petcast.security.jwt.filter.JwtRefreshTokenFilter;
 import com.varchar6.petcast.security.oauth2.CustomAuthorizationCodeTokenResponseClient;
 import com.varchar6.petcast.security.oauth2.CustomHttpSessionOAuth2AuthorizationRequestRepository;
+import com.varchar6.petcast.security.oauth2.repository.StatelessAuthorizationRequestRepository;
 import com.varchar6.petcast.security.oauth2.service.CustomOAuth2UserService;
 import com.varchar6.petcast.security.provider.ProviderManager;
 import com.varchar6.petcast.security.utility.JwtUtil;
@@ -30,7 +31,8 @@ public class WebSecurity {
     private final LogoutHandler logoutHandler;
     private final LogoutSuccessHandler logoutSuccessHandler;
     private final CustomOAuth2UserService oAuth2UserService;
-    private final CustomHttpSessionOAuth2AuthorizationRequestRepository authorizationRequestRepository;
+//    private final StatelessAuthorizationRequestRepository statelessAuthorizationRequestRepository;
+    private final CustomHttpSessionOAuth2AuthorizationRequestRepository customHttpSessionOAuth2AuthorizationRequestRepository;
     private final AuthenticationSuccessHandler oAuthAuthenticationSuccessHandler;
 
     @Autowired
@@ -39,15 +41,17 @@ public class WebSecurity {
             ProviderManager providerManager,
             LogoutHandler logoutHandler,
             LogoutSuccessHandler logoutSuccessHandler,
-            CustomHttpSessionOAuth2AuthorizationRequestRepository authorizationRequestRepository,
             CustomOAuth2UserService oAuth2UserService,
+//            StatelessAuthorizationRequestRepository statelessAuthorizationRequestRepository,
+            CustomHttpSessionOAuth2AuthorizationRequestRepository customHttpSessionOAuth2AuthorizationRequestRepository,
             AuthenticationSuccessHandler oAuthAuthenticationSuccessHandler
     ) {
         this.jwtUtil = jwtUtil;
         this.providerManager = providerManager;
         this.logoutHandler = logoutHandler;
         this.logoutSuccessHandler = logoutSuccessHandler;
-        this.authorizationRequestRepository = authorizationRequestRepository;
+//        this.statelessAuthorizationRequestRepository = statelessAuthorizationRequestRepository;
+        this.customHttpSessionOAuth2AuthorizationRequestRepository = customHttpSessionOAuth2AuthorizationRequestRepository;
         this.oAuth2UserService = oAuth2UserService;
         this.oAuthAuthenticationSuccessHandler = oAuthAuthenticationSuccessHandler;
     }
@@ -64,6 +68,8 @@ public class WebSecurity {
                 .authorizeHttpRequests(authorize -> authorize
 //                        .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()     // for dev
                         .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/members/sign-up")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/oauth2/authorization/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/login/oauth2/**")).permitAll()
 //                        .requestMatchers(new AntPathRequestMatcher("/api/v1/members/sign-up")).permitAll()
 //                        .requestMatchers(new AntPathRequestMatcher("/api/v1/notice", "POST")).hasRole(Role.ADMIN.getType())
@@ -78,7 +84,8 @@ public class WebSecurity {
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(authorization -> authorization
-                                .authorizationRequestRepository(authorizationRequestRepository)
+//                                .authorizationRequestRepository(statelessAuthorizationRequestRepository)
+                                .authorizationRequestRepository(customHttpSessionOAuth2AuthorizationRequestRepository)
                         )
                         .tokenEndpoint(token -> token
                                 .accessTokenResponseClient(new CustomAuthorizationCodeTokenResponseClient()) // 커스텀 토큰 응답 클라이언트 설정

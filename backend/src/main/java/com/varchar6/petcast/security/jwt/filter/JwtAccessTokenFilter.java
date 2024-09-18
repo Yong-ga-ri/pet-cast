@@ -15,13 +15,9 @@ import java.io.IOException;
 @Slf4j
 public class JwtAccessTokenFilter extends OncePerRequestFilter {
     private final AuthenticationManager providerManager;
-    private final AntPathRequestMatcher refreshExcludePathMatcher;
-    private final AntPathRequestMatcher oAuthExcludePathMatcher;
 
     public JwtAccessTokenFilter(AuthenticationManager providerManager) {
         this.providerManager = providerManager;
-        this.refreshExcludePathMatcher = new AntPathRequestMatcher("/api/v1/auth/refresh", "POST");
-        this.oAuthExcludePathMatcher = new AntPathRequestMatcher("/api/v1/login/oauth2/code/kakao", "GET");
     }
 
     @Override
@@ -30,19 +26,14 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        if (refreshExcludePathMatcher.matches(request) || oAuthExcludePathMatcher.matches(request)) {
-            log.debug("JwtAccessTokenFilter skipped");
-            filterChain.doFilter(request, response);
-        } else {
-            String authorizationHeader = request.getHeader("Authorization");
-            log.debug("JwtAccessTokenFilter called");
-            // 헤더가 있는지 확인
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                providerManager.authenticate(
-                        new JwtAuthenticationAccessToken(authorizationHeader.replace("Bearer ", ""))
-                );
-            }
-            filterChain.doFilter(request, response);
+        String authorizationHeader = request.getHeader("Authorization");
+        log.debug("JwtAccessTokenFilter called");
+        // 헤더가 있는지 확인
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            providerManager.authenticate(
+                    new JwtAuthenticationAccessToken(authorizationHeader.replace("Bearer ", ""))
+            );
         }
+        filterChain.doFilter(request, response);
     }
 }

@@ -37,24 +37,25 @@ public class CustomHttpSessionOAuth2AuthorizationRequestRepository implements Au
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
         Assert.notNull(request, "request cannot be null");
         Assert.notNull(response, "response cannot be null");
-        log.debug("saveAuthorizationRequest called");
-        log.debug("authorizationRequest: {}", authorizationRequest);
-        String grantType = authorizationRequest.getGrantType().getValue();
-        String authorizationRequestUri = authorizationRequest.getAuthorizationRequestUri();
-        String responseType = authorizationRequest.getResponseType().getValue();
-        String clientId = authorizationRequest.getClientId();
-        String redirectUri = authorizationRequest.getRedirectUri();
-        Map<String, Object> additionalParameters = authorizationRequest.getAdditionalParameters();
-        Map<String, Object> attributes = authorizationRequest.getAttributes();
-        log.debug("grantType: {}", grantType);
-        log.debug("authorizationRequestUri: {}", authorizationRequestUri);
-        log.debug("responseType: {}", responseType);
-        log.debug("clientId: {}", clientId);
-        log.debug("redirectUri: {}", redirectUri);
+//        log.debug("saveAuthorizationRequest called");
+//        log.debug("authorizationRequest: {}", authorizationRequest);
+//        String grantType = authorizationRequest.getGrantType().getValue();
+//        String authorizationRequestUri = authorizationRequest.getAuthorizationRequestUri();
+//        String responseType = authorizationRequest.getResponseType().getValue();
+//        String clientId = authorizationRequest.getClientId();
+//        String redirectUri = authorizationRequest.getRedirectUri();
+//        Map<String, Object> additionalParameters = authorizationRequest.getAdditionalParameters();
+//        Map<String, Object> attributes = authorizationRequest.getAttributes();
+//        log.debug("grantType: {}", grantType);
+//        log.debug("authorizationRequestUri: {}", authorizationRequestUri);
+//        log.debug("responseType: {}", responseType);
+//        log.debug("clientId: {}", clientId);
+//        log.debug("redirectUri: {}", redirectUri);
         if (authorizationRequest == null) {
             this.removeAuthorizationRequest(request, response);
         } else {
             String state = authorizationRequest.getState();
+            log.debug("saving authorizationRequest with state {}", state);
             Assert.hasText(state, "authorizationRequest.state cannot be empty");
             request.getSession().setAttribute(this.sessionAttributeName, authorizationRequest);
         }
