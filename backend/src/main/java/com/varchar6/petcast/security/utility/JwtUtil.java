@@ -1,6 +1,7 @@
 package com.varchar6.petcast.security.utility;
 
 import com.varchar6.petcast.domain.member.query.service.MemberAuthenticationService;
+import com.varchar6.petcast.security.exception.GlobalAuthenticationException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -37,14 +38,17 @@ public class JwtUtil {
     }
 
     public boolean isTokenValidate(String token) {
+        log.debug("isTokenValidate called");
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key).build()
                     .parseClaimsJws(token);
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid access token {}", e.getMessage());
+            throw new GlobalAuthenticationException("Invalid token", e);
         } catch (ExpiredJwtException e) {
             log.info("Expired access token {}", e.getMessage());
+            throw new GlobalAuthenticationException("Expired access token", e);
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported access token {}", e.getMessage());
         } catch (IllegalArgumentException e) {

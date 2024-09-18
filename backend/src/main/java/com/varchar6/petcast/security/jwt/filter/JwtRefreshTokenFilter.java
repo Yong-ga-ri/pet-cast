@@ -47,6 +47,7 @@ public class JwtRefreshTokenFilter extends OncePerRequestFilter {
                 return;
             }
         }
+        log.debug("do next filter from JwtRefreshTokenFilter");
         filterChain.doFilter(request, response);
     }
 }

@@ -1,6 +1,7 @@
 package com.varchar6.petcast.security.config;
 
 import com.varchar6.petcast.security.dao.DaoAuthenticationFilter;
+import com.varchar6.petcast.security.exception.CustomAuthenticationEntryPoint;
 import com.varchar6.petcast.security.jwt.filter.JwtAccessTokenFilter;
 import com.varchar6.petcast.security.jwt.filter.JwtRefreshTokenFilter;
 import com.varchar6.petcast.security.oauth2.CustomAuthorizationCodeTokenResponseClient;
@@ -16,7 +17,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -31,9 +34,10 @@ public class WebSecurity {
     private final LogoutHandler logoutHandler;
     private final LogoutSuccessHandler logoutSuccessHandler;
     private final CustomOAuth2UserService oAuth2UserService;
-//    private final StatelessAuthorizationRequestRepository statelessAuthorizationRequestRepository;
-    private final CustomHttpSessionOAuth2AuthorizationRequestRepository customHttpSessionOAuth2AuthorizationRequestRepository;
+    private final StatelessAuthorizationRequestRepository statelessAuthorizationRequestRepository;
     private final AuthenticationSuccessHandler oAuthAuthenticationSuccessHandler;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final AccessDeniedHandler accessDeniedHandler;
 
     @Autowired
     public WebSecurity(
@@ -42,18 +46,20 @@ public class WebSecurity {
             LogoutHandler logoutHandler,
             LogoutSuccessHandler logoutSuccessHandler,
             CustomOAuth2UserService oAuth2UserService,
-//            StatelessAuthorizationRequestRepository statelessAuthorizationRequestRepository,
-            CustomHttpSessionOAuth2AuthorizationRequestRepository customHttpSessionOAuth2AuthorizationRequestRepository,
-            AuthenticationSuccessHandler oAuthAuthenticationSuccessHandler
+            StatelessAuthorizationRequestRepository statelessAuthorizationRequestRepository,
+            AuthenticationSuccessHandler oAuthAuthenticationSuccessHandler,
+            AuthenticationEntryPoint authenticationEntryPoint,
+            AccessDeniedHandler accessDeniedHandler
     ) {
         this.jwtUtil = jwtUtil;
         this.providerManager = providerManager;
         this.logoutHandler = logoutHandler;
         this.logoutSuccessHandler = logoutSuccessHandler;
-//        this.statelessAuthorizationRequestRepository = statelessAuthorizationRequestRepository;
-        this.customHttpSessionOAuth2AuthorizationRequestRepository = customHttpSessionOAuth2AuthorizationRequestRepository;
+        this.statelessAuthorizationRequestRepository = statelessAuthorizationRequestRepository;
         this.oAuth2UserService = oAuth2UserService;
         this.oAuthAuthenticationSuccessHandler = oAuthAuthenticationSuccessHandler;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
@@ -67,15 +73,16 @@ public class WebSecurity {
                 // 요청에 대한 권한 설정
                 .authorizeHttpRequests(authorize -> authorize
 //                        .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()     // for dev
-                        .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/members/sign-up")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/oauth2/authorization/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/login/oauth2/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/login", "POST")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/oauth2/authorization/**", "GET")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/members/sign-up", "POST")).permitAll()
 //                        .requestMatchers(new AntPathRequestMatcher("/api/v1/members/sign-up")).permitAll()
 //                        .requestMatchers(new AntPathRequestMatcher("/api/v1/notice", "POST")).hasRole(Role.ADMIN.getType())
 //                        .requestMatchers(new AntPathRequestMatcher("/api/v1/**")).hasRole(Role.CUSTOMER.getType())
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(new JwtAccessTokenFilter(providerManager), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtRefreshTokenFilter(providerManager, jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .logout(
                         logout -> logout
                                 .logoutUrl("/api/v1/auth/logout")
@@ -84,19 +91,16 @@ public class WebSecurity {
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(authorization -> authorization
-//                                .authorizationRequestRepository(statelessAuthorizationRequestRepository)
-                                .authorizationRequestRepository(customHttpSessionOAuth2AuthorizationRequestRepository)
+                                .authorizationRequestRepository(statelessAuthorizationRequestRepository)
                         )
-                        .tokenEndpoint(token -> token
-                                .accessTokenResponseClient(new CustomAuthorizationCodeTokenResponseClient()) // 커스텀 토큰 응답 클라이언트 설정
-                        )
-                        .successHandler(oAuthAuthenticationSuccessHandler)
+//                        .tokenEndpoint(token -> token
+//                                .accessTokenResponseClient(new CustomAuthorizationCodeTokenResponseClient()) // 커스텀 토큰 응답 클라이언트 설정
+//                        )
+//                        .successHandler(oAuthAuthenticationSuccessHandler)
                         .userInfoEndpoint(userInfoConfig ->
                                         userInfoConfig.userService(oAuth2UserService)
                         )
                 )
-                .addFilterBefore(new JwtAccessTokenFilter(providerManager), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtRefreshTokenFilter(providerManager, jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(new DaoAuthenticationFilter(providerManager, jwtUtil));
 
         return http.build();

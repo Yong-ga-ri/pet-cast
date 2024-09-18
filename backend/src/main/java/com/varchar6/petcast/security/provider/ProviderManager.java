@@ -1,6 +1,6 @@
 package com.varchar6.petcast.security.provider;
 
-import com.varchar6.petcast.security.exception.AuthenticationException;
+import com.varchar6.petcast.security.exception.GlobalAuthenticationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +21,7 @@ public class ProviderManager implements AuthenticationManager {
     }
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) throws GlobalAuthenticationException {
         for (AuthenticationProvider provider : providerList) {
             log.debug("searching for adequate provider.. // authentication.getClass(): {}", authentication.getClass());
             if (provider.supports(authentication.getClass())) {
@@ -32,6 +32,6 @@ public class ProviderManager implements AuthenticationManager {
         }
 
         // 인증 실패 시 예외 처리
-        throw new AuthenticationException("No provider found for " + authentication.getClass().getName());
+        throw new GlobalAuthenticationException("No provider found for " + authentication.getClass().getName());
     }
 }

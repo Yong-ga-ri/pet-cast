@@ -41,18 +41,21 @@ public class StatelessAuthorizationRequestRepository implements AuthorizationReq
 
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
-
         log.debug("saveAuthorizationRequest called in StatelessAuthorizationRequestRepository");
-        if (authorizationRequest == null) {
-            log.debug("authorizationRequest is null");
-            return;
-        }
-        try {
-            String serialized = objectMapper.writeValueAsString(authorizationRequest);
-            String encoded = Base64.getUrlEncoder().encodeToString(serialized.getBytes());
-            request.getSession().setAttribute(STATE_PARAMETER, encoded);
-        } catch (IOException e) {
-            log.error("Error saving OAuth2AuthorizationRequest", e);
+        log.debug("request.getRequestURI(): {}", request.getRequestURI());
+        if (request.getRequestURI().startsWith("/oauth2/authorization")) {
+            log.debug("request.getRequestURI started with /oauth2/authorization");
+            if (authorizationRequest == null) {
+                log.debug("authorizationRequest is null");
+                return;
+            }
+            try {
+                String serialized = objectMapper.writeValueAsString(authorizationRequest);
+                String encoded = Base64.getUrlEncoder().encodeToString(serialized.getBytes());
+                request.getSession().setAttribute(STATE_PARAMETER, encoded);
+            } catch (IOException e) {
+                log.error("Error saving OAuth2AuthorizationRequest", e);
+            }
         }
     }
 
