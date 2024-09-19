@@ -1,4 +1,4 @@
-package com.varchar6.petcast.security.oauth2;
+package com.varchar6.petcast.security.oauth2.repository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,8 +9,6 @@ import org.springframework.security.oauth2.client.web.HttpSessionOAuth2Authoriza
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
-import java.util.Map;
 
 @Slf4j
 @Component

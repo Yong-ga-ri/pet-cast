@@ -4,8 +4,8 @@ import com.varchar6.petcast.security.dao.DaoAuthenticationFilter;
 import com.varchar6.petcast.security.jwt.filter.JwtAccessTokenFilter;
 import com.varchar6.petcast.security.jwt.filter.JwtRefreshTokenFilter;
 import com.varchar6.petcast.security.oauth2.CustomAuthorizationCodeTokenResponseClient;
-import com.varchar6.petcast.security.oauth2.CustomHttpSessionOAuth2AuthorizationRequestRepository;
-import com.varchar6.petcast.security.oauth2.repository.StatelessAuthorizationRequestRepository;
+import com.varchar6.petcast.security.oauth2.repository.CustomHttpSessionOAuth2AuthorizationRequestRepository;
+import com.varchar6.petcast.security.oauth2.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.varchar6.petcast.security.oauth2.service.CustomOAuth2UserService;
 import com.varchar6.petcast.security.provider.ProviderManager;
 import com.varchar6.petcast.security.utility.JwtUtil;
@@ -32,7 +32,8 @@ public class WebSecurity {
     private final LogoutSuccessHandler logoutSuccessHandler;
     private final CustomOAuth2UserService oAuth2UserService;
 //    private final StatelessAuthorizationRequestRepository statelessAuthorizationRequestRepository;
-    private final CustomHttpSessionOAuth2AuthorizationRequestRepository customHttpSessionOAuth2AuthorizationRequestRepository;
+//    private final CustomHttpSessionOAuth2AuthorizationRequestRepository customHttpSessionOAuth2AuthorizationRequestRepository;
+    private final HttpCookieOAuth2AuthorizationRequestRepository cookieOAuth2AuthorizationRequestRepository;
     private final AuthenticationSuccessHandler oAuthAuthenticationSuccessHandler;
 
     @Autowired
@@ -43,7 +44,8 @@ public class WebSecurity {
             LogoutSuccessHandler logoutSuccessHandler,
             CustomOAuth2UserService oAuth2UserService,
 //            StatelessAuthorizationRequestRepository statelessAuthorizationRequestRepository,
-            CustomHttpSessionOAuth2AuthorizationRequestRepository customHttpSessionOAuth2AuthorizationRequestRepository,
+//            CustomHttpSessionOAuth2AuthorizationRequestRepository customHttpSessionOAuth2AuthorizationRequestRepository,
+            HttpCookieOAuth2AuthorizationRequestRepository cookieOAuth2AuthorizationRequestRepository,
             AuthenticationSuccessHandler oAuthAuthenticationSuccessHandler
     ) {
         this.jwtUtil = jwtUtil;
@@ -51,7 +53,8 @@ public class WebSecurity {
         this.logoutHandler = logoutHandler;
         this.logoutSuccessHandler = logoutSuccessHandler;
 //        this.statelessAuthorizationRequestRepository = statelessAuthorizationRequestRepository;
-        this.customHttpSessionOAuth2AuthorizationRequestRepository = customHttpSessionOAuth2AuthorizationRequestRepository;
+//        this.customHttpSessionOAuth2AuthorizationRequestRepository = customHttpSessionOAuth2AuthorizationRequestRepository;
+        this.cookieOAuth2AuthorizationRequestRepository = cookieOAuth2AuthorizationRequestRepository;
         this.oAuth2UserService = oAuth2UserService;
         this.oAuthAuthenticationSuccessHandler = oAuthAuthenticationSuccessHandler;
     }
@@ -85,7 +88,8 @@ public class WebSecurity {
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(authorization -> authorization
 //                                .authorizationRequestRepository(statelessAuthorizationRequestRepository)
-                                .authorizationRequestRepository(customHttpSessionOAuth2AuthorizationRequestRepository)
+//                                .authorizationRequestRepository(customHttpSessionOAuth2AuthorizationRequestRepository)
+                                .authorizationRequestRepository(cookieOAuth2AuthorizationRequestRepository)
                         )
                         .tokenEndpoint(token -> token
                                 .accessTokenResponseClient(new CustomAuthorizationCodeTokenResponseClient()) // 커스텀 토큰 응답 클라이언트 설정
