@@ -2,7 +2,9 @@ package com.varchar6.petcast.security.oauth2.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.varchar6.petcast.security.oauth2.vo.google.GoogleUserInformationVO;
 import com.varchar6.petcast.security.oauth2.vo.naver.NaverUserInformationVO;
+import com.varchar6.petcast.security.oauth2.vo.responsetoken.GoogleOAuth2TokenResponseVO;
 import com.varchar6.petcast.security.oauth2.vo.responsetoken.KakaoOAuth2TokenResponseVO;
 import com.varchar6.petcast.security.oauth2.vo.kakao.KakaoUserInformationVO;
 import com.varchar6.petcast.security.oauth2.vo.responsetoken.NaverOAuth2TokenResponseVO;
@@ -162,14 +164,14 @@ public class OAuth2AccessTokenService {
         String tokenResponse = restTemplate.exchange(googleTokenUri, HttpMethod.POST, entity, String.class).getBody();
 
         log.debug("tokenResponse: {}", tokenResponse);
-//        KakaoOAuth2TokenResponseVO kakaoOAuth2TokenResponseVO = null;
-//        try {
-//            kakaoOAuth2TokenResponseVO = objectMapper.readValue(tokenResponse, KakaoOAuth2TokenResponseVO.class);
-//        } catch (JsonProcessingException e) {
-//            log.error(e.getMessage());
-//        }
+        GoogleOAuth2TokenResponseVO googleOAuth2TokenResponseVO = null;
+        try {
+            googleOAuth2TokenResponseVO = objectMapper.readValue(tokenResponse, GoogleOAuth2TokenResponseVO.class);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+        }
 
-        return tokenResponse;
+        return googleOAuth2TokenResponseVO.getAccess_token();
 
     }
 
@@ -187,7 +189,6 @@ public class OAuth2AccessTokenService {
         KakaoUserInformationVO kakaoUserInformation = objectMapper.readValue(response.getBody(), KakaoUserInformationVO.class);
         log.debug("kakaoUserInformation: {}", kakaoUserInformation);
         return kakaoUserInformation;
-
     }
 
     public NaverUserInformationVO requestNaverUserInfo(String accessToken) throws JsonProcessingException {
@@ -204,5 +205,21 @@ public class OAuth2AccessTokenService {
         log.debug("naverUserInformation: {}", naverUserInformation);
         return naverUserInformation;
 
+    }
+
+    public GoogleUserInformationVO requestGoogleUserInfo(String accessToken) throws JsonProcessingException {
+        // 헤더에 Access Token 추가
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        // GET 요청으로 사용자 정보 가져오기
+        ResponseEntity<String> response = restTemplate.exchange(googleUserInfoUri, HttpMethod.GET, entity, String.class);
+        log.debug("response: {}", response);
+        log.debug("response.getBody(): {}", response.getBody());
+        GoogleUserInformationVO googleUserInformation = objectMapper.readValue(response.getBody(), GoogleUserInformationVO.class);
+        log.debug("googleUserInformation: {}", googleUserInformation);
+        return googleUserInformation;
     }
 }

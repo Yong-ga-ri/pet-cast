@@ -2,6 +2,7 @@ package com.varchar6.petcast.security.oauth2.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.varchar6.petcast.security.oauth2.service.OAuth2AccessTokenService;
+import com.varchar6.petcast.security.oauth2.vo.google.GoogleUserInformationVO;
 import com.varchar6.petcast.security.oauth2.vo.naver.NaverUserInformationVO;
 import com.varchar6.petcast.security.oauth2.vo.responsetoken.KakaoOAuth2TokenResponseVO;
 import com.varchar6.petcast.security.oauth2.vo.kakao.KakaoUserInformationVO;
@@ -42,11 +43,10 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/code/google")
-    public String googleLogin(@RequestParam String code) throws JsonProcessingException {
+    public GoogleUserInformationVO googleLogin(@RequestParam String code) throws JsonProcessingException {
         log.debug("googleLogin called in OAuth2Controller");
 
         String tokenVO = oAuth2AccessTokenService.getAccessTokenFromGoogle(code);
-//        oAuth2AccessTokenService.requestKakaoUserInfo(tokenVO.getAccess_token());
-        return null;
+        return oAuth2AccessTokenService.requestGoogleUserInfo(tokenVO);
     }
 }
