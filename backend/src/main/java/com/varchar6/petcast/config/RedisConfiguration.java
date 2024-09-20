@@ -14,7 +14,6 @@ public class RedisConfiguration {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         log.debug("isClosed: {}", redisConnectionFactory.getConnection().isClosed());
         template.setConnectionFactory(redisConnectionFactory);
-
         return template;
     }
 }
