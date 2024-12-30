@@ -25,7 +25,7 @@
              , A.FIXED
              , A.ACTIVE
              , A.MEMBER_ID
-          FROM TBL_NOTICE A
+          FROM tbl_notice A
          WHERE A.ID = #{ id }
     </select>
     <select id="selectAllNotice" resultMap="memberResultMap" parameterType="_int">
@@ -39,6 +39,6 @@
              , A.FIXED
              , A.ACTIVE
              , A.MEMBER_ID
-          FROM TBL_NOTICE A
+          FROM tbl_notice A
     </select>
 </mapper>

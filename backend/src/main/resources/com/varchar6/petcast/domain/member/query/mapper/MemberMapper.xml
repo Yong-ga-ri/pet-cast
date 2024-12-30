@@ -29,7 +29,7 @@
              , A.UPDATED_AT
              , A.ACTIVE
              , A.INTRODUCTION
-          FROM TBL_MEMBER A
+          FROM tbl_member A
          WHERE A.ID = #{ id }
     </select>
 
@@ -46,7 +46,7 @@
         , A.UPDATED_AT
         , A.ACTIVE
         , A.INTRODUCTION
-        FROM TBL_MEMBER A
+        FROM tbl_member A
         WHERE A.LOGIN_ID = #{ loginId }
     </select>
 
@@ -63,7 +63,7 @@
         , A.UPDATED_AT
         , A.ACTIVE
         , A.INTRODUCTION
-        FROM TBL_MEMBER A
+        FROM tbl_member A
         WHERE A.NICKNAME = #{ nickname }
     </select>
 
@@ -80,7 +80,7 @@
         , A.UPDATED_AT
         , A.ACTIVE
         , A.INTRODUCTION
-        FROM TBL_MEMBER A
+        FROM tbl_member A
         WHERE A.NAME = #{ name }
         AND A.PHONE = #{ phone }
     </select>
@@ -98,7 +98,7 @@
         , A.UPDATED_AT
         , A.ACTIVE
         , A.INTRODUCTION
-        FROM TBL_MEMBER A
+        FROM tbl_member A
         WHERE A.LOGIN_ID = #{ loginId }
         AND A.PHONE = #{ phone }
     </select>
@@ -116,7 +116,7 @@
         , A.UPDATED_AT
         , A.ACTIVE
         , A.INTRODUCTION
-        FROM TBL_MEMBER A
+        FROM tbl_member A
         WHERE A.ID = #{ id }
     </select>
 
@@ -153,10 +153,10 @@
              , M.ACTIVE AS memberActive
              , R.NAME AS roleName
              , R.ACTIVE AS roleActive
-          FROM TBL_MEMBER M
-         INNER JOIN TBL_MEMBER_ROLE MR
+          FROM tbl_member M
+         INNER JOIN tbl_member_role MR
             ON (M.ID = MR.MEMBER_ID)
-         INNER JOIN TBL_ROLE R
+         INNER JOIN tbl_role R
             ON (MR.ROLE_ID = R.ID)
          WHERE M.LOGIN_ID = #{ memberId }
          GROUP BY R.NAME
@@ -177,10 +177,10 @@
              , M.ACTIVE AS memberActive
              , R.NAME AS roleName
              , R.ACTIVE AS roleActive
-          FROM TBL_MEMBER M
-         INNER JOIN TBL_MEMBER_ROLE MR
+          FROM tbl_member M
+         INNER JOIN tbl_member_role MR
             ON (M.ID = MR.MEMBER_ID)
-         INNER JOIN TBL_ROLE R
+         INNER JOIN tbl_role R
             ON (MR.ROLE_ID = R.ID)
          WHERE M.ID = #{ memberId }
          GROUP BY R.NAME

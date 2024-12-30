@@ -17,7 +17,7 @@
              , R.CREATED_AT
              , R.REPORTER_ID
              , R.RESPONDENT_ID
-          FROM TBL_REPORT R
+          FROM tbl_report R
          ORDER BY CREATED_AT DESC
     </select>
     <select id = "selectReportByReporterId" resultMap="reportResultMap" parameterType="_int">
@@ -27,7 +27,7 @@
              , R.CREATED_AT
              , R.REPORTER_ID
              , R.RESPONDENT_ID
-          FROM TBL_REPORT R
+          FROM tbl_report R
          WHERE REPORTER_ID = #{ reporterId }
         ORDER BY CREATED_AT DESC
     </select>
@@ -38,7 +38,7 @@
              , R.CREATED_AT
              , R.REPORTER_ID
              , R.RESPONDENT_ID
-          FROM TBL_REPORT R
+          FROM tbl_report R
          WHERE RESPONDENT_ID = #{ respondentId }
          ORDER BY CREATED_AT DESC
     </select>

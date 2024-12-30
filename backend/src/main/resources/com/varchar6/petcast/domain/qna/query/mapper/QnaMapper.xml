@@ -28,7 +28,7 @@
              , Q.COMPANY_ID
              , Q.QUESTIONER_ID
              , Q.ANSWERER_ID
-          FROM TBL_QNA Q
+          FROM tbl_qna Q
          WHERE Q.QUESTIONER_ID = #{ questionerId } AND Q.ACTIVE = TRUE
          ORDER BY CREATED_AT DESC;
     </select>
@@ -44,7 +44,7 @@
              , Q.COMPANY_ID
              , Q.QUESTIONER_ID
              , Q.ANSWERER_ID
-          FROM TBL_QNA Q
+          FROM tbl_qna Q
          WHERE Q.COMPANY_ID = #{ companyId } AND Q.ACTIVE = TRUE
          ORDER BY CREATED_AT DESC;
     </select>
@@ -61,7 +61,7 @@
              , Q.COMPANY_ID
              , Q.QUESTIONER_ID
              , Q.ANSWERER_ID
-          FROM TBL_QNA Q
+          FROM tbl_qna Q
          WHERE Q.ID = #{ id } AND Q.ACTIVE = TRUE
     </select>
 </mapper>

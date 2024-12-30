@@ -37,16 +37,16 @@
              , TC.ACTIVE
              , TC.APPROVED
              , TC.MEMBER_ID
-          FROM TBL_COMPANY TC
+          FROM tbl_company TC
          WHERE TC.ID = #{companyId}
     </select>
     <select id="findCategoriesByCompanyId" resultMap="companyCategoryList" parameterType="string">
         SELECT
                CT.NAME AS categoryName
-          FROM TBL_COMPANY CP
-         INNER JOIN TBL_COMPANY_CATEGORY CC
+          FROM tbl_company CP
+         INNER JOIN tbl_company_category CC
             ON (CP.ID = CC.COMPANY_ID)
-         INNER JOIN TBL_CATEGORY CT
+         INNER JOIN tbl_category CT
             ON (CC.CATEGORY_ID = CT.ID)
          WHERE CP.ID = #{ memberId };
     </select>
@@ -65,7 +65,7 @@
              , TC.ACTIVE
              , TC.APPROVED
              , TC.MEMBER_ID
-          FROM TBL_COMPANY TC
+          FROM tbl_company TC
          WHERE TC.ACTIVE = true
          ORDER BY TC.CREATED_AT DESC
     </select>

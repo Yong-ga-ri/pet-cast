@@ -23,7 +23,7 @@
          , A.STATUS
          , A.COMPANY_ID
          , A.MEMBER_ID
-      FROM TBL_EVENT A
+      FROM tbl_event A
      WHERE A.MEMBER_ID = #{ customerId }
        AND A.ID &lt; #{ lastEventId }
      ORDER BY A.ID DESC
@@ -39,7 +39,7 @@
          , A.STATUS
          , A.COMPANY_ID
          , A.MEMBER_ID
-      FROM TBL_EVENT A
+      FROM tbl_event A
      WHERE A.COMPANY_ID = #{ companyId }
        AND A.ID &lt; #{ lastEventId }
      ORDER BY A.ID DESC
@@ -55,7 +55,7 @@
          , A.STATUS
          , A.COMPANY_ID
          , A.MEMBER_ID
-      FROM TBL_EVENT A
+      FROM tbl_event A
      WHERE A.ID = #{ eventId }
   </select>
 

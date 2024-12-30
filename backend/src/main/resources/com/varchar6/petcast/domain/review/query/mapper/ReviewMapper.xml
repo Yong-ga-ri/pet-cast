@@ -19,8 +19,8 @@
          , A.COMMENT
          , A.SCORE
          , A.EVENT_ID
-      FROM TBL_REVIEW A
-      JOIN TBL_EVENT B ON (A.EVENT_ID = B.ID)
+      FROM tbl_review A
+      JOIN tbl_event B ON (A.EVENT_ID = B.ID)
      WHERE B.MEMBER_ID = #{ customerId }
        AND A.ID &lt; #{ lastReviewId }
      ORDER BY A.ID DESC
@@ -34,8 +34,8 @@
          , A.COMMENT
          , A.SCORE
          , A.EVENT_ID
-      FROM TBL_REVIEW A
-      JOIN TBL_EVENT B ON (A.EVENT_ID = B.ID)
+      FROM tbl_review A
+      JOIN tbl_event B ON (A.EVENT_ID = B.ID)
      WHERE B.COMPANY_ID = #{ companyId }
        AND A.ID &lt; #{ lastReviewId }
      ORDER BY A.ID DESC
